@@ -8,6 +8,43 @@
   <script src="/_sdk/element_sdk.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&amp;family=Quicksand:wght@400;600;700&amp;display=swap" rel="stylesheet">
   <style>
+    /* Fundo de corações */
+.heart-bg {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.heart {
+    position: absolute;
+    bottom: -50px;
+    color: rgba(255, 105, 180, 0.7);
+    animation: heartsUp linear infinite;
+    user-select: none;
+    filter: drop-shadow(0 0 8px rgba(255, 105, 180, 0.4));
+}
+
+@keyframes heartsUp {
+    0% {
+        transform: translateY(0) translateX(0) rotate(0deg) scale(0.7);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: translateY(-50vh) translateX(30px) rotate(180deg) scale(1);
+    }
+
+    100% {
+        transform: translateY(-120vh) translateX(-30px) rotate(360deg) scale(1.2);
+        opacity: 0;
+    }
+}
     .shake { animation: shake 0.4s ease; }
     @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
     @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
@@ -33,7 +70,7 @@
      💕
     </div>
     <h1 id="question" class="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-2" style="font-family: 'Playfair Display', serif;">Quer sair comigo?</h1>
-    <p class="text-pink-200 text-base sm:text-lg mb-6 sm:mb-10 opacity-80">Prometo que vai ser incrível ✨</p>
+    <p class="text-pink-200 text-base sm:text-lg mb-6 sm:mb-10 opacity-80">Prometo que vai ser incrível ✨ Ass: Josué Rodrigo</p>
     <div class="flex gap-4 sm:gap-6 flex-wrap justify-center relative" style="min-height: 100px; width: 100%; max-width: 500px;">
      <button id="btnSim" onclick="sayYes()" class="px-6 sm:px-10 py-3 sm:py-4 bg-pink-500 hover:bg-pink-400 text-white text-base sm:text-xl font-bold rounded-full shadow-lg shadow-pink-500/30 transition-all hover:scale-110">Sim! 💖</button> <button id="btnNao" onmouseenter="moveNo()" onclick="moveNo()" class="px-6 sm:px-10 py-3 sm:py-4 bg-gray-600 text-white text-base sm:text-xl font-bold rounded-full shadow-lg transition-all">Não 😢</button>
     </div>
@@ -82,18 +119,35 @@
   // Criar corações flutuantes
   function createFloatingHearts() {
     const heartBg = document.getElementById('heartBg');
-    for (let i = 0; i < 15; i++) {
-      const heart = document.createElement('div');
-      heart.className = 'heart';
-      heart.textContent = '❤️';
-      heart.style.left = Math.random() * 100 + '%';
-      heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
-      heart.style.animationDelay = Math.random() * 2 + 's';
-      heartBg.appendChild(heart);
-    }
-  }
 
-  createFloatingHearts();
+    function createHeart() {
+        const heart = document.createElement('div');
+
+        const hearts = ['❤️', '💖', '💕', '💗', '💓'];
+        heart.className = 'heart';
+        heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+        heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
+
+        heartBg.appendChild(heart);
+
+        setTimeout(() => {
+            heart.remove();
+        }, 10000);
+    }
+
+    // Cria vários inicialmente
+    for (let i = 0; i < 25; i++) {
+        setTimeout(createHeart, i * 300);
+    }
+
+    // Continua criando infinitamente
+    setInterval(createHeart, 400);
+}
+
+createFloatingHearts();
 
   // Música romântica (Web Audio API)
   function createRomanticMusic() {
@@ -194,23 +248,38 @@
     document.getElementById('screen2').classList.add('flex');
   }
 
-  function selectFood(el) {
-    document.querySelectorAll('.food-btn').forEach(b => { b.classList.remove('ring-2', 'ring-pink-400', 'bg-white/20'); b.classList.add('bg-white/10'); });
+function selectFood(el) {
+    document.querySelectorAll('.food-btn').forEach(b => {
+        b.classList.remove('ring-2', 'ring-pink-400', 'bg-white/20');
+        b.classList.add('bg-white/10');
+    });
+
     el.classList.add('ring-2', 'ring-pink-400', 'bg-white/20');
     el.classList.remove('bg-white/10');
-    selectedFood = el.querySelector('.text-4xl').textContent + ' ' + el.querySelector('.text-sm').textContent;
+
+    const spans = el.querySelectorAll('span');
+
+    selectedFood =
+        spans[0].textContent + ' ' +
+        spans[1].textContent;
+
     checkReady();
-  }
+}
 
   document.getElementById('dateInput').addEventListener('change', checkReady);
 
   function checkReady() {
     const btn = document.getElementById('confirmBtn');
-    if (selectedFood && document.getElementById('dateInput').value) {
-      btn.disabled = false;
-      btn.classList.remove('opacity-50', 'cursor-not-allowed');
+    const date = document.getElementById('dateInput').value;
+
+    if (selectedFood && date) {
+        btn.disabled = false;
+        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+    } else {
+        btn.disabled = true;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
     }
-  }
+}
 
   function confirmDate() {
     const date = new Date(document.getElementById('dateInput').value + 'T12:00:00');
