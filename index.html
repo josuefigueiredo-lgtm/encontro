@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="pt-BR" class="h-full">
+ <head><script src="/_sdk/telemetry_sdk.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Date Invite</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&amp;family=Quicksand:wght@400;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    .shake { animation: shake 0.4s ease; }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    .float { animation: float 3s ease-in-out infinite; }
+    @keyframes fadeIn { from{opacity:0;transform:scale(0.9)} to{opacity:1;transform:scale(1)} }
+    .fade-in { animation: fadeIn 0.5s ease forwards; }
+    @keyframes heartFloat { 0%{transform:translateY(100vh) rotate(0deg); opacity:1} 100%{transform:translateY(-100vh) rotate(360deg); opacity:0} }
+    .heart-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+    .heart { position: absolute; font-size: 2rem; animation: heartFloat linear infinite; opacity: 0.6; }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div class="heart-bg" id="heartBg"></div>
+  <audio id="bgMusic" loop style="display:none;"><source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav">
+  </audio>
+  <div id="app" class="h-full w-full overflow-auto relative flex flex-col" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); font-family: 'Quicksand', sans-serif; z-index: 1; position: relative;">
+   <!-- Screen 1: Invite -->
+   <div id="screen1" class="h-full w-full flex flex-col items-center justify-center p-4 sm:p-6 text-center">
+    <div class="float text-5xl sm:text-6xl mb-4 sm:mb-6">
+     💕
+    </div>
+    <h1 id="question" class="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-2" style="font-family: 'Playfair Display', serif;">Quer sair comigo?</h1>
+    <p class="text-pink-200 text-base sm:text-lg mb-6 sm:mb-10 opacity-80">Prometo que vai ser incrível ✨</p>
+    <div class="flex gap-4 sm:gap-6 flex-wrap justify-center relative" style="min-height: 100px; width: 100%; max-width: 500px;">
+     <button id="btnSim" onclick="sayYes()" class="px-6 sm:px-10 py-3 sm:py-4 bg-pink-500 hover:bg-pink-400 text-white text-base sm:text-xl font-bold rounded-full shadow-lg shadow-pink-500/30 transition-all hover:scale-110">Sim! 💖</button> <button id="btnNao" onmouseenter="moveNo()" onclick="moveNo()" class="px-6 sm:px-10 py-3 sm:py-4 bg-gray-600 text-white text-base sm:text-xl font-bold rounded-full shadow-lg transition-all">Não 😢</button>
+    </div>
+   </div><!-- Screen 2: Choose food & date -->
+   <div id="screen2" class="h-full w-full flex flex-col items-center justify-center p-4 sm:p-6 text-center hidden">
+    <div class="fade-in w-full">
+     <div class="text-4xl sm:text-5xl mb-4">
+      🥳💘
+     </div>
+     <h2 id="successMsg" class="text-xl sm:text-3xl md:text-4xl font-bold text-white mb-6 sm:mb-8" style="font-family: 'Playfair Display', serif;">Oba! Agora escolhe o que quer comer:</h2>
+     <div class="grid grid-cols-2 gap-3 sm:gap-4 max-w-sm mx-auto mb-6 sm:mb-10">
+      <button class="food-btn p-3 sm:p-4 bg-white/10 hover:bg-white/20 rounded-2xl text-center transition-all hover:scale-105 border border-white/10" onclick="selectFood(this)"><span class="text-3xl sm:text-4xl block mb-1">🍕</span><span class="text-white text-xs sm:text-sm">Pizza</span></button> <button class="food-btn p-3 sm:p-4 bg-white/10 hover:bg-white/20 rounded-2xl text-center transition-all hover:scale-105 border border-white/10" onclick="selectFood(this)"><span class="text-3xl sm:text-4xl block mb-1">🍣</span><span class="text-white text-xs sm:text-sm">Japonês</span></button> <button class="food-btn p-3 sm:p-4 bg-white/10 hover:bg-white/20 rounded-2xl text-center transition-all hover:scale-105 border border-white/10" onclick="selectFood(this)"><span class="text-3xl sm:text-4xl block mb-1">🍔</span><span class="text-white text-xs sm:text-sm">Hambúrguer</span></button> <button class="food-btn p-3 sm:p-4 bg-white/10 hover:bg-white/20 rounded-2xl text-center transition-all hover:scale-105 border border-white/10" onclick="selectFood(this)"><span class="text-3xl sm:text-4xl block mb-1">🍝</span><span class="text-white text-xs sm:text-sm">Italiano</span></button> <button class="food-btn p-3 sm:p-4 bg-white/10 hover:bg-white/20 rounded-2xl text-center transition-all hover:scale-105 border border-white/10" onclick="selectFood(this)"><span class="text-3xl sm:text-4xl block mb-1">🌮</span><span class="text-white text-xs sm:text-sm">Mexicano</span></button> <button class="food-btn p-3 sm:p-4 bg-white/10 hover:bg-white/20 rounded-2xl text-center transition-all hover:scale-105 border border-white/10" onclick="selectFood(this)"><span class="text-3xl sm:text-4xl block mb-1">🍰</span><span class="text-white text-xs sm:text-sm">Doces</span></button>
+     </div>
+     <div class="max-w-xs mx-auto mb-6 sm:mb-8">
+      <label class="text-pink-200 text-xs sm:text-sm block mb-2 text-left" for="dateInput">Escolhe o dia 📅</label> <input type="date" id="dateInput" class="w-full p-2 sm:p-3 rounded-xl bg-white/10 border border-white/20 text-white text-center text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-pink-400">
+     </div><button id="confirmBtn" onclick="confirmDate()" class="px-6 sm:px-8 py-2 sm:py-3 bg-pink-500 hover:bg-pink-400 text-white text-base sm:text-lg font-bold rounded-full shadow-lg shadow-pink-500/30 transition-all hover:scale-105 opacity-50 cursor-not-allowed" disabled>Confirmar 💌</button>
+    </div>
+   </div><!-- Screen 3: Confirmed -->
+   <div id="screen3" class="h-full w-full flex flex-col items-center justify-center p-4 sm:p-6 text-center hidden">
+    <div class="fade-in">
+     <div class="text-5xl sm:text-6xl mb-4 sm:mb-6 float">
+      💕
+     </div>
+     <h2 class="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-6 sm:mb-8" style="font-family: 'Playfair Display', serif;">É um encontro!</h2>
+     <div class="text-xl sm:text-2xl text-pink-200 space-y-3 sm:space-y-4">
+      <p id="summaryFood" class="text-2xl sm:text-3xl font-bold text-white mb-3 sm:mb-4"></p>
+      <p id="summaryDate" class="text-lg sm:text-2xl text-pink-100 mb-4 sm:mb-6"></p>
+      <p class="text-base sm:text-xl italic text-pink-200">Te espero! com muito carinho,</p>
+      <p class="text-2xl sm:text-3xl font-bold text-pink-400">Carla 😘</p>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+  const defaultConfig = {
+    main_question: "Quer sair comigo?",
+    success_message: "Oba! Agora escolhe o que quer comer:",
+    primary_color: "#ec4899",
+    bg_color: "#1a1a2e",
+    text_color: "#ffffff",
+    font_family: "Playfair Display"
+  };
+
+  let selectedFood = null;
+
+  // Criar corações flutuantes
+  function createFloatingHearts() {
+    const heartBg = document.getElementById('heartBg');
+    for (let i = 0; i < 15; i++) {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.textContent = '❤️';
+      heart.style.left = Math.random() * 100 + '%';
+      heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+      heart.style.animationDelay = Math.random() * 2 + 's';
+      heartBg.appendChild(heart);
+    }
+  }
+
+  createFloatingHearts();
+
+  // Música romântica (Web Audio API)
+  function createRomanticMusic() {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playNote(freq, duration, time) {
+      const osc = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      
+      osc.connect(gain);
+      gain.connect(audioContext.destination);
+      
+      osc.frequency.value = freq;
+      osc.type = 'sine';
+      
+      gain.gain.setValueAtTime(0.1, time);
+      gain.gain.exponentialRampToValueAtTime(0.01, time + duration);
+      
+      osc.start(time);
+      osc.stop(time + duration);
+    }
+    
+    const now = audioContext.currentTime;
+    const tempo = 0.5;
+    
+    // Melodia romântica simples
+    const melody = [
+      [261.63, tempo], [293.66, tempo], [329.63, tempo], [349.23, tempo * 2],
+      [329.63, tempo], [293.66, tempo], [261.63, tempo * 2],
+      [261.63, tempo], [293.66, tempo], [329.63, tempo], [349.23, tempo * 2],
+      [392.00, tempo], [440.00, tempo], [493.88, tempo * 2]
+    ];
+    
+    melody.forEach((note, i) => {
+      const time = now + (i * note[1]);
+      playNote(note[0], note[1], time);
+    });
+  }
+
+  // Ativar música ao clicar em Sim
+  function startMusic() {
+    try {
+      createRomanticMusic();
+    } catch(e) {
+      console.log('Audio context not available');
+    }
+  }
+
+  window.elementSdk.init({
+    defaultConfig,
+    onConfigChange: async (config) => {
+      document.getElementById('question').textContent = config.main_question || defaultConfig.main_question;
+      document.getElementById('successMsg').textContent = config.success_message || defaultConfig.success_message;
+      const font = config.font_family || defaultConfig.font_family;
+      document.querySelectorAll('[style*="font-family"]').forEach(el => el.style.fontFamily = `${font}, serif`);
+      const baseSize = config.font_size || 16;
+      document.getElementById('question').style.fontSize = `${baseSize * 2.5}px`;
+      document.getElementById('successMsg').style.fontSize = `${baseSize * 1.8}px`;
+      const colors = [config.bg_color, config.primary_color, config.text_color];
+      document.getElementById('app').style.background = `linear-gradient(135deg, ${colors[0] || '#1a1a2e'} 0%, #16213e 50%, #0f3460 100%)`;
+      document.querySelectorAll('.bg-pink-500, #btnSim, #confirmBtn').forEach(el => {
+        el.style.backgroundColor = config.primary_color || defaultConfig.primary_color;
+      });
+    },
+    mapToCapabilities: (config) => ({
+      recolorables: [
+        { get: () => config.bg_color || defaultConfig.bg_color, set: v => { config.bg_color = v; window.elementSdk.setConfig({ bg_color: v }); } },
+        { get: () => config.primary_color || defaultConfig.primary_color, set: v => { config.primary_color = v; window.elementSdk.setConfig({ primary_color: v }); } },
+        { get: () => config.text_color || defaultConfig.text_color, set: v => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } }
+      ],
+      borderables: [],
+      fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: v => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); } },
+      fontSizeable: { get: () => config.font_size || 16, set: v => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); } }
+    }),
+    mapToEditPanelValues: (config) => new Map([
+      ["main_question", config.main_question || defaultConfig.main_question],
+      ["success_message", config.success_message || defaultConfig.success_message]
+    ])
+  });
+
+  function moveNo() {
+    const btn = document.getElementById('btnNao');
+    const parent = btn.parentElement;
+    const rect = parent.getBoundingClientRect();
+    const x = Math.random() * (rect.width - 120);
+    const y = Math.random() * (rect.height - 60);
+    btn.style.position = 'absolute';
+    btn.style.left = x + 'px';
+    btn.style.top = y + 'px';
+    btn.classList.add('shake');
+    setTimeout(() => btn.classList.remove('shake'), 400);
+  }
+
+  function sayYes() {
+    startMusic();
+    document.getElementById('screen1').classList.add('hidden');
+    document.getElementById('screen2').classList.remove('hidden');
+    document.getElementById('screen2').classList.add('flex');
+  }
+
+  function selectFood(el) {
+    document.querySelectorAll('.food-btn').forEach(b => { b.classList.remove('ring-2', 'ring-pink-400', 'bg-white/20'); b.classList.add('bg-white/10'); });
+    el.classList.add('ring-2', 'ring-pink-400', 'bg-white/20');
+    el.classList.remove('bg-white/10');
+    selectedFood = el.querySelector('.text-4xl').textContent + ' ' + el.querySelector('.text-sm').textContent;
+    checkReady();
+  }
+
+  document.getElementById('dateInput').addEventListener('change', checkReady);
+
+  function checkReady() {
+    const btn = document.getElementById('confirmBtn');
+    if (selectedFood && document.getElementById('dateInput').value) {
+      btn.disabled = false;
+      btn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+  }
+
+  function confirmDate() {
+    const date = new Date(document.getElementById('dateInput').value + 'T12:00:00');
+    const formatted = date.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+    document.getElementById('screen2').classList.add('hidden');
+    document.getElementById('screen3').classList.remove('hidden');
+    document.getElementById('screen3').classList.add('flex');
+    document.getElementById('summaryFood').textContent = selectedFood;
+    document.getElementById('summaryDate').textContent = `no dia ${formatted}`;
+  }
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0acb124c1d3d835',t:'MTc4MTMwNzUzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
