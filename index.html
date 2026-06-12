@@ -8,13 +8,17 @@
   <script src="/_sdk/element_sdk.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&amp;family=Quicksand:wght@400;600;700&amp;display=swap" rel="stylesheet">
   <style>
+    #app > div {
+    position: relative;
+    z-index: 10;
+}
     /* Fundo de corações */
 .heart-bg {
     position: fixed;
     inset: 0;
     overflow: hidden;
     pointer-events: none;
-    z-index: 0;
+    z-index: 5;
 }
 
 .heart {
@@ -63,7 +67,14 @@
   <div class="heart-bg" id="heartBg"></div>
   <audio id="bgMusic" loop style="display:none;"><source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav">
   </audio>
-  <div id="app" class="h-full w-full overflow-auto relative flex flex-col" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); font-family: 'Quicksand', sans-serif; z-index: 1; position: relative;">
+  <div id="app"
+     class="h-full w-full overflow-auto relative flex flex-col"
+     style="
+        background: linear-gradient(135deg, #1a1a2e 0%, #640855 50%, #0f3460 100%);
+        font-family: 'Quicksand', sans-serif;
+        position: relative;
+        z-index: 1;
+     ">
    <!-- Screen 1: Invite -->
    <div id="screen1" class="h-full w-full flex flex-col items-center justify-center p-4 sm:p-6 text-center">
     <div class="float text-5xl sm:text-6xl mb-4 sm:mb-6">
